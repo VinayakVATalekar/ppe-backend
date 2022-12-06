@@ -158,15 +158,15 @@ def get_page():
     entry=request.json.get("entry_no",None)
     pn=mongo.pagination(entry,page)
     data=[]
+    dict={"entry_no":entry,"page_no":page}
+    data.append(dict)
     for x in pn:
         x["_id"]=str(x["_id"])
         data.append(x)
     return jsonify(data)    
-@app.route('/')
-def hello():
-    return "welcome to the flask tutorials"
+
 
 
 
 if __name__ == "__main__":
-    app.run(host ='0.0.0.0', port = 5001, debug = True)
+    app.run( debug = True)
