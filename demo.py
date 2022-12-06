@@ -158,8 +158,7 @@ def get_page():
     entry=request.json.get("entry_no",None)
     pn=mongo.pagination(entry,page)
     data=[]
-    
-    data.append(dict)
+       
     for x in pn:
         x["_id"]=str(x["_id"])
         data.append(x)
