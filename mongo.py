@@ -15,7 +15,8 @@ def check_user(username):
    if  client['my_db']['username'].find_one({"username":username}):
        return True
    return False
-
+def get_allusers():
+    return client["my_db"]["username"].find({},{"password":0})
 
 def get_camera(cam_id):
    return client["my_db"]["camera"].find_one(cam_id)
