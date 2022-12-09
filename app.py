@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 import bcrypt
 import mongo 
+from blocklist import BLOCKLIST
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity,get_jwt
@@ -44,7 +45,7 @@ def get_all_users():
     data=[]
     userr=mongo.get_allusers()
     for x in userr:
-        x["_id"]=str(["_id"])
+        x["_id"]=str(x["_id"])
         data.append(x)
 
     return jsonify(data), 200
@@ -65,8 +66,23 @@ def login():
         return jsonify(acc_token=acc_token)
     return {"msg":"wrong password"}
 
-from blocklist import BLOCKLIST
-
+@app.route("/change",methods=["POST"])
+@jwt_required()
+def change_password():
+    data=request.json #password, new_password,re-entered password
+    username = get_jwt_identity()
+    user=mongo.get_user(username) #geting usernamae data from mongodb databse
+    pwd= data["old_password"].encode('utf-8') #password encoding for checking purpose
+    result=bcrypt.checkpw(pwd,user["password"]) #checking password is corect or not rusult=true/false
+    if result is True:
+        if data["new_password"]==data["re-enter_password"]: #checking if new and re-enterd password are same
+            has=hashing(data["new_password"]) #calling hasing function {returns password with encryption and salt}
+            un=user["username"] #username to identify dacument in database mongodb
+            mongo.change_pwd(un,has) #function call password updated succesfully
+            return {"msg":"password changed succesfully"}
+        return {"msg":"new pasword doen't match with re-entered_passsword "}
+    return {"msg":"wrong password "}
+       
 @jwt.token_in_blocklist_loader
 def check_if_token_in_blocklist(jwt_header, jwt_payload):
     return jwt_payload["jti"] in BLOCKLIST
@@ -81,7 +97,6 @@ def revoked_token_callback(jwt_header, jwt_payload):
     )
 
 @app.route("/logout", methods=["POST"])
-
 @jwt_required()
 def logout():
     jti = get_jwt()["jti"]
@@ -158,15 +173,11 @@ def get_page():
     entry=request.json.get("entry_no",None)
     pn=mongo.pagination(entry,page)
     data=[]
-       
     for x in pn:
         x["_id"]=str(x["_id"])
         data.append(x)
     dict={"entry_no":entry,"page_no":page,"pagination":data}    
-    return jsonify(dict)    
-
-
-
+    return jsonify(dict)  
 
 if __name__ == "__main__":
     app.run( debug = True)
