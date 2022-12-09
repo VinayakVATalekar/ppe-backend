@@ -47,4 +47,7 @@ def pagination(entry,page):
     cursur=client["my_db"]['alert'].find().sort("Date_and_Time",-1)
     return cursur[cur_st:cur_end]
 
+def change_pwd(username,pwd):# geting username to identify record and update password
+   client["my_db"]["username"].update_one({"username":username},{"$set": {"password":pwd}})
+
     
