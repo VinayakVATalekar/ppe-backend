@@ -14,10 +14,10 @@ db = client['my_db']
 
 mycollection = db['camera']
 #number of records wanto enter 
-t=15
+record=15
 isodate =datetime.datetime.now()
 
-for i in range(1,t+1):
+for i in range(1,record+1):
 	db['camera'].insert_one( { "cam_id": i,
      "Camera_Name": f"cmaera {i}",
      "Location": f"section {i}",
@@ -28,8 +28,8 @@ for i in range(1,t+1):
 	
  )
 #no of alert msgs to enter 	
-al=20			
-for j in range(1,al+1):
+alerts=20			
+for j in range(1,alerts+1):
 	r=random.randrange(0,9)
 	d=random.randrange(0,4)
 	db['alert'].insert_one(
