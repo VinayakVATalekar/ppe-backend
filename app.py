@@ -66,7 +66,7 @@ def login():
         return jsonify(acc_token=acc_token)
     return {"msg":"wrong password"}
 
-@app.route("/change",methods=["POST"])
+@app.route("/change_password",methods=["POST"])
 @jwt_required()
 def change_password():
     data=request.json #password, new_password,re-entered password
