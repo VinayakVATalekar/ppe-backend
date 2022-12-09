@@ -70,15 +70,14 @@ def login():
 @jwt_required()
 def change_password():
     data=request.json #password, new_password,re-entered password
-    username = get_jwt_identity()
+    username=get_jwt_identity()
     user=mongo.get_user(username) #geting usernamae data from mongodb databse
     pwd= data["old_password"].encode('utf-8') #password encoding for checking purpose
     result=bcrypt.checkpw(pwd,user["password"]) #checking password is corect or not rusult=true/false
     if result is True:
         if data["new_password"]==data["re-enter_password"]: #checking if new and re-enterd password are same
             has=hashing(data["new_password"]) #calling hasing function {returns password with encryption and salt}
-            un=user["username"] #username to identify dacument in database mongodb
-            mongo.change_pwd(un,has) #function call password updated succesfully
+            mongo.change_pwd(username,has) #function call password updated succesfully
             return {"msg":"password changed succesfully"}
         return {"msg":"new pasword doen't match with re-entered_passsword "}
     return {"msg":"wrong password "}
