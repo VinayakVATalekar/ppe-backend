@@ -81,6 +81,12 @@ def change_password():
             return {"msg":"password changed succesfully"}
         return {"msg":"new pasword doen't match with re-entered_passsword "}
     return {"msg":"wrong password "}
+
+@app.route("/user",methods=["GET"])
+@jwt_required()
+def user():
+    username = get_jwt_identity()
+    return jsonify({"username":username})
        
 @jwt.token_in_blocklist_loader
 def check_if_token_in_blocklist(jwt_header, jwt_payload):
